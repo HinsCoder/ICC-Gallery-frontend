@@ -159,6 +159,11 @@ const columns = [
     width: 80,
   },
   {
+    title: '空间 id',
+    dataIndex: 'spaceId',
+    width: 80,
+  },
+  {
     title: '审核信息',
     dataIndex: 'reviewMessage',
   },
@@ -194,6 +199,7 @@ const sortOrder = ref<'ascend' | 'descend' | null>(null)
 const fetchData = async () => {
   const res = await listPictureByPageUsingPost({
     ...searchParams,
+    nullSpaceId: true,
     sortField: 'createTime', // 固定排序字段为创建时间
     sortOrder: sortOrder.value ?? undefined, // 使用当前的排序状态
   })
