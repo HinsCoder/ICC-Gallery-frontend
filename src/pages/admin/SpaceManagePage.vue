@@ -4,8 +4,12 @@
       <h2>空间管理</h2>
       <a-space>
         <a-button type="primary" href="/add_space" target="_blank">+ 创建空间</a-button>
-        <a-button type="primary" ghost href="/space_analyze?queryPublic=1" target="_blank">分析公共图库</a-button>
-        <a-button type="primary" ghost href="/space_analyze?queryAll=1" target="_blank">分析全部空间</a-button>
+        <a-button type="primary" ghost href="/space_analyze?queryPublic=1" target="_blank"
+        >分析公共图库</a-button
+        >
+        <a-button type="primary" ghost href="/space_analyze?queryAll=1" target="_blank"
+        >分析全部空间</a-button
+        >
       </a-space>
     </a-flex>
     <div style="margin-bottom: 16px" />
@@ -20,6 +24,15 @@
           style="min-width: 180px"
           placeholder="请选择空间级别"
           :options="SPACE_LEVEL_OPTIONS"
+          allow-clear
+        />
+      </a-form-item>
+      <a-form-item label="空间类别" name="spaceType">
+        <a-select
+          v-model:value="searchParams.spaceType"
+          :options="SPACE_TYPE_OPTIONS"
+          placeholder="请输入空间类别"
+          style="min-width: 180px"
           allow-clear
         />
       </a-form-item>
@@ -41,6 +54,10 @@
       <template #bodyCell="{ column, record }">
         <template v-if="column.dataIndex === 'spaceLevel'">
           <div>{{ SPACE_LEVEL_MAP[record.spaceLevel] }}</div>
+        </template>
+        <!-- 空间类别 -->
+        <template v-if="column.dataIndex === 'spaceType'">
+          <a-tag>{{ SPACE_TYPE_MAP[record.spaceType] }}</a-tag>
         </template>
         <template v-if="column.dataIndex === 'spaceUseInfo'">
           <div>大小：{{ formatSize(record.totalSize) }} / {{ formatSize(record.maxSize) }}</div>
@@ -72,8 +89,14 @@ import { computed, onMounted, reactive, ref } from 'vue'
 import { deleteSpaceUsingPost, listSpaceByPageUsingPost } from '@/api/spaceController.ts'
 import { message } from 'ant-design-vue'
 import dayjs from 'dayjs'
-import { SPACE_LEVEL_MAP, SPACE_LEVEL_OPTIONS } from '../../constants/space.ts'
+import {
+  SPACE_LEVEL_MAP,
+  SPACE_LEVEL_OPTIONS,
+  SPACE_TYPE_MAP,
+  SPACE_TYPE_OPTIONS,
+} from '../../constants/space.ts'
 import { formatSize } from '../../utils'
+
 const columns = [
   {
     title: 'id',
@@ -87,6 +110,10 @@ const columns = [
   {
     title: '空间级别',
     dataIndex: 'spaceLevel',
+  },
+  {
+    title: '空间类别',
+    dataIndex: 'spaceType',
   },
   {
     title: '使用情况',
@@ -110,9 +137,11 @@ const columns = [
     key: 'action',
   },
 ]
+
 // 定义数据
 const dataList = ref<API.Space[]>([])
 const total = ref(0)
+
 // 搜索条件
 const searchParams = reactive<API.SpaceQueryRequest>({
   current: 1,
@@ -120,6 +149,7 @@ const searchParams = reactive<API.SpaceQueryRequest>({
   sortField: 'createTime',
   sortOrder: 'descend',
 })
+
 // 获取数据
 const fetchData = async () => {
   const res = await listSpaceByPageUsingPost({
@@ -132,10 +162,12 @@ const fetchData = async () => {
     message.error('获取数据失败，' + res.data.message)
   }
 }
+
 // 页面加载时获取数据，请求一次
 onMounted(() => {
   fetchData()
 })
+
 // 分页参数
 const pagination = computed(() => {
   return {
@@ -146,18 +178,21 @@ const pagination = computed(() => {
     showTotal: (total) => `共 ${total} 条`,
   }
 })
+
 // 表格变化之后，重新获取数据
 const doTableChange = (page: any) => {
   searchParams.current = page.current
   searchParams.pageSize = page.pageSize
   fetchData()
 }
+
 // 搜索数据
 const doSearch = () => {
   // 重置页码
   searchParams.current = 1
   fetchData()
 }
+
 // 删除数据
 const doDelete = async (id: string) => {
   if (!id) {
