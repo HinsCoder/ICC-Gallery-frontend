@@ -34,6 +34,19 @@
                       我的空间
                     </router-link>
                   </a-menu-item>
+                  <a-menu-item v-if="loginUserStore.loginUser.userRole === 'user'" key="redeem">
+                    <router-link to="/user_exchange_vip">
+                      <GiftOutlined />
+                      兑换会员
+                    </router-link>
+                  </a-menu-item>
+                  <a-menu-item
+                    v-if="loginUserStore.loginUser.userRole === 'vip'"
+                    class="vip-menu-item"
+                  >
+                    <CrownOutlined :style="{ color: '#ffd700' }" />
+                    <span class="vip-text"> 黄金会员</span>
+                  </a-menu-item>
                   <a-menu-item @click="doLogout">
                     <LogoutOutlined />
                     退出登录
@@ -52,7 +65,13 @@
 </template>
 <script lang="ts" setup>
 import { computed, h, ref } from 'vue'
-import { HomeOutlined, LogoutOutlined, UserOutlined } from '@ant-design/icons-vue'
+import {
+  HomeOutlined,
+  LogoutOutlined,
+  UserOutlined,
+  CrownOutlined,
+  GiftOutlined,
+} from '@ant-design/icons-vue'
 import { type MenuProps, message } from 'ant-design-vue'
 import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
@@ -160,5 +179,14 @@ const doLogout = async () => {
 
 .logo {
   height: 48px;
+}
+
+.vip-menu-item {
+  background: linear-gradient(45deg, #fff3e0, #ffecb3);
+}
+.vip-text {
+  color: #ffd700;
+  font-weight: 600;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
 </style>
