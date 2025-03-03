@@ -89,6 +89,12 @@ declare namespace API {
     message?: string
   }
 
+  type BaseResponseMapStringString_ = {
+    code?: number
+    data?: Record<string, any>
+    message?: string
+  }
+
   type BaseResponsePagePicture_ = {
     code?: number
     data?: PagePicture_
@@ -195,6 +201,11 @@ declare namespace API {
     id?: number
   }
 
+  type EmailCodeRequest = {
+    email?: string
+    type?: string
+  }
+
   type GetOutPaintingTaskResponse = {
     output?: Output1
     requestId?: string
@@ -238,6 +249,7 @@ declare namespace API {
   type LoginUserVO = {
     createTime?: string
     editTime?: string
+    email?: string
     id?: number
     updateTime?: string
     userAccount?: string
@@ -246,6 +258,8 @@ declare namespace API {
     userProfile?: string
     userRole?: string
   }
+
+  type MapStringString_ = true
 
   type Output = {
     taskId?: string
@@ -655,6 +669,7 @@ declare namespace API {
   type User = {
     createTime?: string
     editTime?: string
+    email?: string
     id?: number
     isDelete?: number
     updateTime?: string
@@ -677,9 +692,23 @@ declare namespace API {
     userRole?: string
   }
 
+  type UserChangeEmailRequest = {
+    code?: string
+    newEmail?: string
+  }
+
   type UserLoginRequest = {
-    userAccount?: string
+    accountOrEmail?: string
+    serververifycode?: string
     userPassword?: string
+    verifyCode?: string
+  }
+
+  type UserModifyPassWord = {
+    checkPassword?: string
+    id?: number
+    newPassword?: string
+    oldPassword?: string
   }
 
   type UserQueryRequest = {
@@ -696,8 +725,22 @@ declare namespace API {
 
   type UserRegisterRequest = {
     checkPassword?: string
+    code?: string
+    email?: string
     userAccount?: string
     userPassword?: string
+  }
+
+  type UserResetPasswordRequest = {
+    checkPassword?: string
+    code?: string
+    email?: string
+    newPassword?: string
+  }
+
+  type UserUnbanRequest = {
+    isUnban?: boolean
+    userId?: number
   }
 
   type UserUpdateRequest = {
@@ -710,6 +753,7 @@ declare namespace API {
 
   type UserVO = {
     createTime?: string
+    email?: string
     id?: number
     userAccount?: string
     userAvatar?: string

@@ -14,6 +14,51 @@ export async function addUserUsingPost(body: API.UserAddRequest, options?: { [ke
   })
 }
 
+/** banOrUnbanUser POST /api/user/ban */
+export async function banOrUnbanUserUsingPost(
+  body: API.UserUnbanRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/ban', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** changeEmail POST /api/user/change/email */
+export async function changeEmailUsingPost(
+  body: API.UserChangeEmailRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/change/email', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** changePassword POST /api/user/changePassword */
+export async function changePasswordUsingPost(
+  body: API.UserModifyPassWord,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/changePassword', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** deleteUser POST /api/user/delete */
 export async function deleteUserUsingPost(
   body: API.DeleteRequest,
@@ -59,6 +104,21 @@ export async function getUserByIdUsingGet(
   })
 }
 
+/** getEmailCode POST /api/user/get_emailcode */
+export async function getEmailCodeUsingPost(
+  body: API.EmailCodeRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseString_>('/api/user/get_emailcode', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
 /** getLoginUser GET /api/user/get/login */
 export async function getLoginUserUsingGet(options?: { [key: string]: any }) {
   return request<API.BaseResponseLoginUserVO_>('/api/user/get/login', {
@@ -78,6 +138,14 @@ export async function getUserVoByIdUsingGet(
     params: {
       ...params,
     },
+    ...(options || {}),
+  })
+}
+
+/** getCode GET /api/user/getcode */
+export async function getCodeUsingGet(options?: { [key: string]: any }) {
+  return request<API.BaseResponseMapStringString_>('/api/user/getcode', {
+    method: 'GET',
     ...(options || {}),
   })
 }
@@ -126,6 +194,21 @@ export async function userRegisterUsingPost(
   options?: { [key: string]: any }
 ) {
   return request<API.BaseResponseLong_>('/api/user/register', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    data: body,
+    ...(options || {}),
+  })
+}
+
+/** resetPassword POST /api/user/reset/password */
+export async function resetPasswordUsingPost(
+  body: API.UserResetPasswordRequest,
+  options?: { [key: string]: any }
+) {
+  return request<API.BaseResponseBoolean_>('/api/user/reset/password', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

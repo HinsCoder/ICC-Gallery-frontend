@@ -35,6 +35,14 @@ const router = createRouter({
       component: UserRegisterPage,
     },
     {
+      path: '/user/reset-password',
+      name: '重置密码',
+      component: () => import('@/pages/user/UserResetPasswordPage.vue'),
+      meta: {
+        keepAlive: false,
+      },
+    },
+    {
       path: '/admin/userManage',
       name: '用户管理',
       component: UserManagePage,

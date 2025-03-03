@@ -1,14 +1,9 @@
 <template>
-  <div id="userRegisterPage">
-    <h2 class="title">智能云图库 - 用户注册</h2>
-    <div class="desc">企业级智能协作云图库</div>
-    <a-form
-      :model="formState"
-      name="basic"
-      label-align="left"
-      autocomplete="off"
-      @finish="handleSubmit"
-    >
+  <div id="userResetPasswordPage">
+    <h2 class="title">重置密码</h2>
+    <div class="desc">请输入您的注册邮箱</div>
+    <a-form :model="formState" name="basic" autocomplete="off" @finish="handleSubmit">
+
       <!-- 邮箱输入 -->
       <a-form-item
         name="email"
@@ -27,7 +22,14 @@
       </a-form-item>
 
       <!-- 邮箱验证码 -->
-      <a-form-item name="code" :rules="[{ required: true, message: '请输入验证码' }]">
+      <a-form-item
+        name="code"
+        :rules="[
+            { required: true, message: '请输入验证码' },
+            { len: 6, message: '验证码长度为 6 位' },
+            { pattern: /^\d+$/, message: '验证码必须是数字' }
+          ]"
+      >
         <div class="verify-code-container">
           <a-input
             v-model:value="formState.code"
@@ -35,6 +37,7 @@
             size="large"
             :prefix="h(SafetyCertificateOutlined)"
             class="custom-input verify-input"
+            maxlength="6"
           />
           <a-button
             class="send-code-btn"
@@ -47,17 +50,17 @@
         </div>
       </a-form-item>
 
-      <!-- 密码输入 -->
+      <!-- 新密码输入 -->
       <a-form-item
-        name="userPassword"
+        name="newPassword"
         :rules="[
-            { required: true, message: '请输入密码' },
+            { required: true, message: '请输入新密码' },
             { min: 8, message: '密码长度不能小于 8 位' },
           ]"
       >
         <a-input-password
-          v-model:value="formState.userPassword"
-          placeholder="请输入密码"
+          v-model:value="formState.newPassword"
+          placeholder="请输入新密码"
           size="large"
           :prefix="h(LockOutlined)"
           class="custom-input"
@@ -78,33 +81,37 @@
         />
       </a-form-item>
 
-      <!-- 登录链接 -->
+      <!-- 返回登录 -->
       <div class="login-link">
-        已有账号？
-        <RouterLink to="/user/login" class="link-text">立即登录</RouterLink>
+        记起密码了？
+        <RouterLink to="/user/login" class="link-text">返回登录</RouterLink>
       </div>
 
-      <!-- 注册按钮 -->
+      <!-- 提交按钮 -->
       <a-form-item>
         <a-button type="primary" html-type="submit" class="submit-button" size="large">
-          注册
+          重置密码
         </a-button>
       </a-form-item>
     </a-form>
   </div>
 </template>
-
 <script lang="ts" setup>
-import { reactive, ref, h ,onBeforeUnmount} from 'vue'
-import { userRegisterUsingPost, getEmailCodeUsingPost } from '@/api/userController.ts'
+import { reactive, ref, h, onBeforeUnmount } from 'vue'
+import { resetPasswordUsingPost, getEmailCodeUsingPost } from '@/api/userController'
 import { message } from 'ant-design-vue'
 import router from '@/router'
-import { MailOutlined, LockOutlined, CheckOutlined, SafetyCertificateOutlined } from '@ant-design/icons-vue'
+import {
+  MailOutlined,
+  LockOutlined,
+  CheckOutlined,
+  SafetyCertificateOutlined
+} from '@ant-design/icons-vue'
 
-// 用于接收表单输入的值
-const formState = reactive<API.UserRegisterRequest>({
+// 用于接受表单输入的值
+const formState = reactive<API.UserResetPasswordRequest>({
   email: '',
-  userPassword: '',
+  newPassword: '',
   checkPassword: '',
   code: '',
 })
@@ -116,27 +123,35 @@ let timer: NodeJS.Timeout | null = null
 // 发送邮箱验证码
 const sendEmailCode = async () => {
   try {
-    await getEmailCodeUsingPost({
+    const res = await getEmailCodeUsingPost({
       email: formState.email,
-      type: 'register'
+      type: 'resetPassword'
     })
-    message.success('验证码已发送')
-    countdown.value = 60
-    timer = setInterval(() => {
-      countdown.value--
-      if (countdown.value <= 0) {
-        clearInterval(timer!)
-        timer = null
-      }
-    }, 1000)
+    if (res.data.code === 0) {
+      message.success('验证码已发送')
+      countdown.value = 60
+      timer = setInterval(() => {
+        countdown.value--
+        if (countdown.value <= 0) {
+          clearInterval(timer!)
+          timer = null
+        }
+      }, 1000)
+    } else {
+      message.error(res.data.message || '发送失败')
+    }
   } catch (error: any) {
-    message.error('验证码发送失败：' + error.message)
+    if (error.response?.data) {
+      message.error(error.response.data.message || '发送失败')
+    } else {
+      message.error('网络错误，请稍后重试')
+    }
   }
 }
 
 // 验证两次密码是否一致
 const validatePassword = async (_rule: any, value: string) => {
-  if (value !== formState.userPassword) {
+  if (value !== formState.newPassword) {
     return Promise.reject('两次输入的密码不一致')
   }
   return Promise.resolve()
@@ -144,12 +159,20 @@ const validatePassword = async (_rule: any, value: string) => {
 
 // 提交表单
 const handleSubmit = async (values: any) => {
-  const res = await userRegisterUsingPost(values)
-  if (res.data.code === 0 && res.data.data) {
-    message.success('注册成功')
-    await router.push('/user/login')
-  } else {
-    message.error('注册失败，' + res.data.message)
+  try {
+    const res = await resetPasswordUsingPost(values)
+    if (res.data.code === 0) {
+      message.success('密码重置成功')
+      await router.push('/user/login')
+    } else {
+      message.error(res.data.message || '重置失败')
+    }
+  } catch (error: any) {
+    if (error.response?.data) {
+      message.error(error.response.data.message || '重置失败')
+    } else {
+      message.error('网络错误，请稍后重试')
+    }
   }
 }
 
@@ -163,7 +186,7 @@ onBeforeUnmount(() => {
 </script>
 
 <style scoped>
-#userRegisterPage {
+#userResetPasswordPage {
   max-width: 360px;
   margin: 0 auto;
 }
@@ -183,36 +206,37 @@ onBeforeUnmount(() => {
   display: flex;
   gap: 12px;
   align-items: center;
-}
 
-.verify-input {
-  flex: 1;
-}
-
-.send-code-btn {
-  min-width: 120px;
-  height: 44px;
-  border-radius: 12px;
-  background: linear-gradient(135deg, #53a2ff 0%, #6b6bff 100%);
-  border: none;
-  color: white;
-  font-size: 14px;
-  font-weight: 500;
-  transition: all 0.3s ease;
-
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(107, 107, 255, 0.2);
+  .verify-input {
+    flex: 1;
   }
 
-  &:active:not(:disabled) {
-    transform: translateY(1px);
-  }
+  .code-image {
+    width: 120px;
+    height: 44px;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 
-  &:disabled {
-    background: #e2e8f0;
-    color: #94a3b8;
-    cursor: not-allowed;
+    &:hover {
+      transform: translateY(-1px);
+    }
+
+    &:active {
+      transform: translateY(1px);
+    }
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      padding: 2px;
+    }
   }
 }
 
@@ -221,17 +245,6 @@ onBeforeUnmount(() => {
   margin-bottom: 24px;
   color: #64748b;
   font-size: 14px;
-
-  .link-text {
-    color: #53a2ff;
-    font-weight: 500;
-    margin-left: 4px;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: #3d8bff;
-    }
-  }
 }
 
 .submit-button {
@@ -252,6 +265,30 @@ onBeforeUnmount(() => {
 
   &:active {
     transform: translateY(1px);
+  }
+}
+
+
+.register-link {
+  text-align: center;
+  margin-bottom: 24px;
+  color: #64748b;
+  font-size: 14px;
+
+  .divider {
+    margin: 0 8px;
+    color: #e2e8f0;
+  }
+
+  .link-text {
+    color: #53a2ff;
+    font-weight: 500;
+    margin-left: 4px;
+    transition: color 0.3s ease;
+
+    &:hover {
+      color: #3d8bff;
+    }
   }
 }
 

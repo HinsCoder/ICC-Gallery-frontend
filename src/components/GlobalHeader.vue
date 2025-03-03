@@ -28,6 +28,12 @@
               </ASpace>
               <template #overlay>
                 <a-menu>
+                  <a-menu-item key="setting">
+                    <router-link to="/user/setting">
+                      <SettingOutlined />
+                      个人中心
+                    </router-link>
+                  </a-menu-item>
                   <a-menu-item>
                     <router-link to="/my_space">
                       <UserOutlined />
@@ -56,7 +62,12 @@
             </a-dropdown>
           </div>
           <div v-else>
-            <a-button type="primary" href="/user/login">登录</a-button>
+            <a-button type="primary" href="/user/login" class="login-button">
+                <span class="button-content">
+                  <UserOutlined />
+                  <span>登录</span>
+                </span>
+            </a-button>
           </div>
         </div>
       </a-col>
@@ -69,6 +80,7 @@ import {
   HomeOutlined,
   LogoutOutlined,
   UserOutlined,
+  SettingOutlined,
   CrownOutlined,
   GiftOutlined,
 } from '@ant-design/icons-vue'
@@ -180,6 +192,44 @@ const doLogout = async () => {
 .logo {
   height: 48px;
 }
+
+/* 登录按钮样式 */
+.login-button {
+  height: 36px;
+  width: 90px;
+  padding: 0 20px;
+  border-radius: 18px;
+  background: linear-gradient(135deg, #53a2ff 0%, #6b6bff 100%);
+  border: none;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 4px 12px rgba(107, 107, 255, 0.2);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px; /* 增加顶部间距 */
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(107, 107, 255, 0.3);
+  }
+
+  &:active {
+    transform: translateY(1px);
+  }
+
+  .button-content {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  :deep(.anticon) {
+    font-size: 15px;
+  }
+}
+
 
 .vip-menu-item {
   background: linear-gradient(45deg, #fff3e0, #ffecb3);
