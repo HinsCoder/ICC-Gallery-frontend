@@ -12,7 +12,7 @@
       </a-layout>
       <a-layout-footer class="footer">
         <a href="https://github.com/HinsCoder" target="_blank">
-          智能协作云图库 by HinsCoder
+          智绘云库 by HinsCoder
         </a>
       </a-layout-footer>
 

@@ -5,7 +5,7 @@
         <RouterLink to="/">
           <div class="title-bar">
             <img class="logo" src="../assets/logo.png" alt="logo" />
-            <div class="title">智能协作云图库</div>
+            <div class="title">智绘云库</div>
           </div>
         </RouterLink>
       </a-col>
@@ -23,7 +23,7 @@
           <div v-if="loginUserStore.loginUser.id">
             <a-dropdown>
               <ASpace>
-                <a-avatar :src="loginUserStore.loginUser.userAvatar" />
+                <a-avatar :src="loginUserStore.loginUser.userAvatar || getDefaultAvatar(loginUserStore.loginUser?.userName)"/>
                 {{ loginUserStore.loginUser.userName ?? '无名' }}
               </ASpace>
               <template #overlay>
@@ -75,7 +75,7 @@
   </div>
 </template>
 <script lang="ts" setup>
-import { computed, h, ref } from 'vue'
+import { computed, h, onMounted, ref } from 'vue'
 import {
   HomeOutlined,
   LogoutOutlined,
@@ -89,8 +89,14 @@ import { useRouter } from 'vue-router'
 import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import { userLogoutUsingPost } from '@/api/userController.ts'
 
-const loginUserStore = useLoginUserStore()
+// 获取默认头像
+const getDefaultAvatar = (userName: string) => {
+  const defaultName = userName || 'Guest'
+  return `https://api.dicebear.com/9.x/fun-emoji/svg?seed=${encodeURIComponent(defaultName)}
+  &backgroundColor=059ff2,71cf62,f6d594,b6e3f4,c0aede,ffd5dc,d1d4f9,ffdfbf&backgroundType=solid,gradientLinear`
+}
 
+const loginUserStore = useLoginUserStore()
 loginUserStore.fetchLoginUser()
 
 // 未经过滤的菜单项
@@ -123,8 +129,8 @@ const originItems = [
   },
   {
     key: 'others',
-    label: h('a', { href: 'https://github.com/HinsCoder', target: '_blank' }, 'Github'),
-    title: 'Github',
+    label: h('a', { href: 'https://github.com/HinsCoder', target: '_blank' }, '联系我们'),
+    title: '联系我们',
   },
 ]
 
@@ -175,6 +181,10 @@ const doLogout = async () => {
     message.error('退出登录失败，' + res.data.message)
   }
 }
+
+onMounted(async () => {
+  await loginUserStore.fetchLoginUser()
+})
 </script>
 
 <style scoped>

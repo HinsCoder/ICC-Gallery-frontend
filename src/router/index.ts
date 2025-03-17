@@ -43,6 +43,14 @@ const router = createRouter({
       },
     },
     {
+      path: '/user/setting',
+      name: '用户设置',
+      component: () => import('@/pages/SettingView.vue'),
+      meta: {
+        keepAlive: false,
+      },
+    },
+    {
       path: '/admin/userManage',
       name: '用户管理',
       component: UserManagePage,

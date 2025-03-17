@@ -20,10 +20,13 @@
 </template>
 
 <script setup lang="ts">
+import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
 import { reactive, ref } from 'vue'
 import { message } from 'ant-design-vue'
-import { exchangeVipUsingPost } from '@/api/userController.ts'
+import { exchangeVipUsingPost, getLoginUserUsingGet, updateUserUsingPost } from '@/api/userController.ts'
 import { useRouter } from 'vue-router'
+
+const loginUserStore = useLoginUserStore()
 
 // 表单数据
 const formData = reactive<API.VipExchangeRequest>({
@@ -69,6 +72,8 @@ const handleSubmit = async () => {
     loading.value = false
   }
 }
+
+
 </script>
 
 <style scoped>

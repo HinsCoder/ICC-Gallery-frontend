@@ -659,6 +659,11 @@ declare namespace API {
     filepath?: string
   }
 
+  type updateUserAvatarUsingPOSTParams = {
+    /** id */
+    id?: number
+  }
+
   type uploadPictureUsingPOSTParams = {
     fileUrl?: string
     id?: number
