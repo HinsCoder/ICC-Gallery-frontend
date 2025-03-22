@@ -193,7 +193,7 @@ export async function searchPictureByPictureUsingPost(
   body: API.SearchPictureByPictureRequest,
   options?: { [key: string]: any }
 ) {
-  return request<API.BaseResponseListSoImageSearchResult_>('/api/picture/search/picture', {
+  return request<API.BaseResponseListImageSearchResult_>('/api/picture/search/picture', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

@@ -23,15 +23,15 @@ declare namespace API {
     message?: string
   }
 
-  type BaseResponseListPictureVO_ = {
+  type BaseResponseListImageSearchResult_ = {
     code?: number
-    data?: PictureVO[]
+    data?: ImageSearchResult[]
     message?: string
   }
 
-  type BaseResponseListSoImageSearchResult_ = {
+  type BaseResponseListPictureVO_ = {
     code?: number
-    data?: SoImageSearchResult[]
+    data?: PictureVO[]
     message?: string
   }
 
@@ -244,6 +244,11 @@ declare namespace API {
   type getUserVOByIdUsingGETParams = {
     /** id */
     id?: number
+  }
+
+  type ImageSearchResult = {
+    fromUrl?: string
+    thumbUrl?: string
   }
 
   type LoginUserVO = {
@@ -463,14 +468,6 @@ declare namespace API {
 
   type SearchPictureByPictureRequest = {
     pictureId?: number
-  }
-
-  type SoImageSearchResult = {
-    http?: string
-    https?: string
-    imgUrl?: string
-    imgkey?: string
-    title?: string
   }
 
   type Space = {

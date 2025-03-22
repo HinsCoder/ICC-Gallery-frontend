@@ -20,15 +20,15 @@
     >
       <template #renderItem="{ item: picture }">
         <a-list-item style="padding: 0">
-<!--      <a :href="picture.fromUrl" target="_blank">-->
-          <a :href="picture.imgUrl" target="_blank">
-
+            <a :href="picture.fromUrl" target="_blank">
+            <!-- 360识图启用 -->
+            <!-- <a :href="picture.imgUrl" target="_blank"> -->
             <!-- 单张图片 -->
             <a-card hoverable>
               <template #cover>
                 <img
                   :alt="picture.name"
-                  :src="picture.imgUrl"
+                  :src="picture.thumbUrl"
                   style="height: 180px; object-fit: cover"
                 />
               </template>
