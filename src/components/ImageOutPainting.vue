@@ -6,21 +6,26 @@
     :footer="false"
     @cancel="closeModal"
   >
-    <a-row gutter="16">
-      <a-col span="12">
-        <h4>原始图片</h4>
-        <img :src="picture?.url" :alt="picture?.name" style="max-width: 100%" />
-      </a-col>
-      <a-col span="12">
-        <h4>扩图结果</h4>
-        <img
-          v-if="resultImageUrl"
-          :src="resultImageUrl"
-          :alt="picture?.name"
-          style="max-width: 100%"
-        />
-      </a-col>
-    </a-row>
+    <div style="position: relative;">
+      <div style="position: absolute; top: -30px; right: 30px; z-index: 1;">
+        剩余额度：{{ loginUserStore.loginUser.outPaintingQuota }}
+      </div>
+      <a-row gutter="16">
+        <a-col span="12">
+          <h4>原始图片</h4>
+          <img :src="picture?.url" :alt="picture?.name" style="max-width: 100%" />
+        </a-col>
+        <a-col span="12">
+          <h4>扩图结果</h4>
+          <img
+            v-if="resultImageUrl"
+            :src="resultImageUrl"
+            :alt="picture?.name"
+            style="max-width: 100%"
+          />
+        </a-col>
+      </a-row>
+    </div>
     <div style="margin-bottom: 16px" />
     <a-flex justify="center" gap="16">
       <a-button type="primary" :loading="!!taskId" ghost @click="createTask">生成图片</a-button>
@@ -39,6 +44,7 @@ import {
   uploadPictureByUrlUsingPost,
 } from '@/api/pictureController.ts'
 import { message } from 'ant-design-vue'
+import { useLoginUserStore } from '@/stores/useLoginUserStore.ts' // 引入 store
 
 interface Props {
   picture?: API.PictureVO
@@ -49,40 +55,39 @@ interface Props {
 const props = defineProps<Props>()
 
 const resultImageUrl = ref<string>('')
-
-// 任务 id
 const taskId = ref<string>()
+const loginUserStore = useLoginUserStore() // 获取 store 实例
+const isTaskCreating = ref(false); // 标志位,防止重复创建
 
-/**
- * 创建任务
- */
 const createTask = async () => {
-  if (!props.picture?.id) {
-    return
+  if (!props.picture?.id || isTaskCreating.value) {
+    return;
   }
-  const res = await createPictureOutPaintingTaskUsingPost({
-    pictureId: props.picture.id,
-    // 根据需要设置扩图参数
-    parameters: {
-      xScale: 2,
-      yScale: 2,
-    },
-  })
-  if (res.data.code === 0 && res.data.data) {
-    message.success('创建任务成功，请耐心等待，不要退出界面')
-    console.log(res.data.data.output.taskId)
-    taskId.value = res.data.data.output.taskId
-    // 开启轮询
-    startPolling()
-  } else {
-    message.error('图片任务失败，' + res.data.message)
-  }
-}
+  isTaskCreating.value = true;
 
-// 轮询定时器
+  try {
+    const res = await createPictureOutPaintingTaskUsingPost({
+      pictureId: props.picture.id,
+      parameters: {
+        xScale: 2,
+        yScale: 2,
+      },
+    });
+
+    if (res.data.code === 0 && res.data.data) {
+      message.success('创建任务成功，请耐心等待，不要退出界面');
+      taskId.value = res.data.data.output.taskId;
+      startPolling();
+    } else {
+      message.error('图片任务失败，' + res.data.message);
+    }
+  } finally {
+    isTaskCreating.value = false;
+  }
+};
+
 let pollingTimer: NodeJS.Timeout = null
 
-// 开始轮询
 const startPolling = () => {
   if (!taskId.value) {
     return
@@ -98,24 +103,21 @@ const startPolling = () => {
         if (taskResult.taskStatus === 'SUCCEEDED') {
           message.success('扩图任务执行成功')
           resultImageUrl.value = taskResult.outputImageUrl
-          // 清理轮询
           clearPolling()
+          // 不需要手动更新额度了，因为 loginUserStore 是响应式的
         } else if (taskResult.taskStatus === 'FAILED') {
           message.error('扩图任务执行失败')
-          // 清理轮询
           clearPolling()
         }
       }
     } catch (error) {
       console.error('扩图任务轮询失败', error)
       message.error('扩图任务轮询失败，' + error.message)
-      // 清理轮询
       clearPolling()
     }
-  }, 3000) // 每 3 秒轮询一次
+  }, 3000)
 }
 
-// 清理轮询
 const clearPolling = () => {
   if (pollingTimer) {
     clearInterval(pollingTimer)
@@ -124,13 +126,8 @@ const clearPolling = () => {
   }
 }
 
-// 是否正在上传
 const uploadLoading = ref(false)
 
-/**
- * 上传图片
- * @param file
- */
 const handleUpload = async () => {
   uploadLoading.value = true
   try {
@@ -144,9 +141,7 @@ const handleUpload = async () => {
     const res = await uploadPictureByUrlUsingPost(params)
     if (res.data.code === 0 && res.data.data) {
       message.success('图片上传成功')
-      // 将上传成功的图片信息传递给父组件
       props.onSuccess?.(res.data.data)
-      // 关闭弹窗
       closeModal()
     } else {
       message.error('图片上传失败，' + res.data.message)
@@ -158,20 +153,16 @@ const handleUpload = async () => {
   uploadLoading.value = false
 }
 
-// 是否可见
 const visible = ref(false)
 
-// 打开弹窗
 const openModal = () => {
   visible.value = true
 }
 
-// 关闭弹窗
 const closeModal = () => {
   visible.value = false
 }
 
-// 暴露函数给父组件
 defineExpose({
   openModal,
 })

@@ -256,6 +256,7 @@ declare namespace API {
     editTime?: string
     email?: string
     id?: number
+    outPaintingQuota?: number
     updateTime?: string
     userAccount?: string
     userAvatar?: string
@@ -674,6 +675,7 @@ declare namespace API {
     email?: string
     id?: number
     isDelete?: number
+    outPaintingQuota?: number
     updateTime?: string
     userAccount?: string
     userAvatar?: string
@@ -757,6 +759,7 @@ declare namespace API {
     createTime?: string
     email?: string
     id?: number
+    outPaintingQuota?: number
     userAccount?: string
     userAvatar?: string
     userName?: string

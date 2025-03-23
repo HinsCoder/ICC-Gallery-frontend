@@ -81,7 +81,7 @@
         </a-card>
       </a-col>
     </a-row>
-    <ShareModal ref="shareModalRef" :link="shareLink" />
+    <ShareModal ref="shareModalRef" :link="shareLink" :imageUrl="shareImage" />
   </div>
 </template>
 
@@ -170,13 +170,18 @@ const doDownload = () => {
   downloadImage(picture.value.url)
 }
 
-// ----- 分享操作 ----
+// 分享操作
 const shareModalRef = ref()
 // 分享链接
 const shareLink = ref<string>()
+// 分享图片
+const shareImage = ref('')
+
 // 分享
 const doShare = () => {
   shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${picture.value.id}`
+  // 设置分享图片，优先使用缩略图
+  shareImage.value = picture.value.thumbnailUrl || picture.value.url
   if (shareModalRef.value) {
     shareModalRef.value.openModal()
   }

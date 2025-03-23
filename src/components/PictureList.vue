@@ -39,7 +39,7 @@
         </a-list-item>
       </template>
     </a-list>
-    <ShareModal ref="shareModalRef" :link="shareLink" />
+    <ShareModal ref="shareModalRef" :link="shareLink" :imageUrl="shareImage" />
   </div>
 </template>
 
@@ -120,15 +120,20 @@ const doDelete = async (picture, e) => {
   }
 }
 
-// ----- 分享操作 ----
+// 分享操作
 const shareModalRef = ref()
 // 分享链接
 const shareLink = ref<string>()
+// 分享图片
+const shareImage = ref('')
+
 // 分享
 const doShare = (picture, e) => {
   // 阻止冒泡
   e.stopPropagation()
   shareLink.value = `${window.location.protocol}//${window.location.host}/picture/${picture.id}`
+  // 设置分享图片，优先使用缩略图
+  shareImage.value = picture.thumbnailUrl || picture.url
   if (shareModalRef.value) {
     shareModalRef.value.openModal()
   }

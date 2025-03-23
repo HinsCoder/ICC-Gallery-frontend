@@ -49,8 +49,12 @@ import {
 import { useRoute, useRouter } from 'vue-router'
 import {SPACE_LEVEL_MAP, SPACE_LEVEL_OPTIONS, SPACE_TYPE_ENUM, SPACE_TYPE_MAP} from '@/constants/space.ts'
 import { formatSize } from '../utils'
+import { useLoginUserStore } from '@/stores/useLoginUserStore.ts'
+
 
 const space = ref<API.SpaceVO>()
+const loginUserStore = useLoginUserStore()
+const loginUser = loginUserStore.loginUser;
 const spaceForm = reactive<API.SpaceAddRequest | API.SpaceEditRequest>({})
 const loading = ref(false)
 
@@ -78,6 +82,7 @@ const fetchSpaceLevelList = async () => {
 
 onMounted(() => {
   fetchSpaceLevelList()
+  getOldSpace()
 })
 
 const router = useRouter()
@@ -90,6 +95,7 @@ const handleSubmit = async (values: any) => {
   const spaceId = space.value?.id
   loading.value = true
   let res
+  let newSpaceId = spaceId;
   if (spaceId) {
     // 更新
     res = await updateSpaceUsingPost({
@@ -102,14 +108,23 @@ const handleSubmit = async (values: any) => {
       ...spaceForm,
       spaceType: spaceType.value,
     })
+    if(res.data.code === 0 && res.data.data){
+      newSpaceId = res.data.data;
+    }
   }
   // 操作成功
   if (res.data.code === 0 && res.data.data) {
     message.success('操作成功')
     // 跳转到空间详情页
-    router.push({
-      path: `/space/${res.data.data}`,
-    })
+    if (loginUser && loginUser.userRole === 'admin') {
+      router.push({
+        path: `/`, // 首页路径
+      })
+    } else {
+      router.push({
+        path: `/space/${newSpaceId}`,
+      })
+    }
   } else {
     message.error('操作失败，' + res.data.message)
   }
@@ -133,10 +148,6 @@ const getOldSpace = async () => {
     }
   }
 }
-
-onMounted(() => {
-  getOldSpace()
-})
 </script>
 
 <style scoped>

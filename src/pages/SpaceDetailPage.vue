@@ -13,14 +13,13 @@
           + 创建图片
         </a-button>
         <a-button
-          v-if="canManageSpaceUser"
           type="primary"
           ghost
-          :icon="h(TeamOutlined)"
-          :href="`/spaceUserManage/${id}`"
+          :icon="h(UpCircleOutlined)"
+          :href="`/add_space?id=${space.id}`"
           target="_blank"
         >
-          成员管理
+          升级空间
         </a-button>
         <a-button
           v-if="canManageSpaceUser"
@@ -92,7 +91,7 @@ import PictureSearchForm from '@/components/PictureSearchForm.vue'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
 import BatchEditPictureModal from '@/components/BatchEditPictureModal.vue'
-import { BarChartOutlined, EditOutlined, TeamOutlined } from '@ant-design/icons-vue'
+import { BarChartOutlined, EditOutlined, UpCircleOutlined } from '@ant-design/icons-vue'
 import { SPACE_PERMISSION_ENUM, SPACE_TYPE_MAP } from '../constants/space.ts'
 
 interface Props {
