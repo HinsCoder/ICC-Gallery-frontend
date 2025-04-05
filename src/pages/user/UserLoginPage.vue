@@ -1,6 +1,6 @@
 <template>
   <div id="userLoginPage">
-    <h2 class="title">智绘云库 - 用户登录</h2>
+    <h2 class="title">云图汇 - 用户登录</h2>
     <div class="desc">企业级智能协作云图库</div>
     <a-form :model="formState" name="basic" autocomplete="off" @finish="handleSubmit">
 

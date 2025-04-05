@@ -12,17 +12,19 @@
       </a-layout>
       <a-layout-footer class="footer">
         <a href="https://github.com/HinsCoder" target="_blank">
-          智绘云库 by HinsCoder
+          云图汇 by HinsCoder
         </a>
       </a-layout-footer>
 
     </a-layout>
+    <AiAssistant />
   </div>
 </template>
 
 <script setup lang="ts">
 import GlobalHeader from '@/components/GlobalHeader.vue'
 import GlobalSider from "@/components/GlobalSider.vue";
+import AiAssistant from '@/components/chatbot/AiAssistant.vue';
 </script>
 
 <style scoped>

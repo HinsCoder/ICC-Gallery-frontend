@@ -4,8 +4,8 @@
       <a-col flex="200px">
         <RouterLink to="/">
           <div class="title-bar">
-            <img class="logo" src="../assets/logo.png" alt="logo" />
-            <div class="title">智绘云库</div>
+            <img class="logo" src="../assets/homepage-logo.png" alt="logo" />
+<!--            <div class="title">云图汇</div>-->
           </div>
         </RouterLink>
       </a-col>
@@ -162,9 +162,10 @@ router.afterEach((to, from, next) => {
 
 // 路由跳转事件
 const doMenuClick = ({ key }: { key: string }) => {
-  router.push({
-    path: key,
-  })
+  if (key !== 'others')
+    router.push({
+      path: key,
+    })
 }
 
 // 用户注销
@@ -200,7 +201,9 @@ onMounted(async () => {
 }
 
 .logo {
-  height: 48px;
+  height: 40px;
+  margin-top: 15px;
+  margin-left: 0;
 }
 
 /* 登录按钮样式 */

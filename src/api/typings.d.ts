@@ -462,6 +462,10 @@ declare namespace API {
     userId?: number
   }
 
+  type ResponseBodyEmitter = {
+    timeout?: number
+  }
+
   type SearchPictureByColorRequest = {
     picColor?: string
     spaceId?: number

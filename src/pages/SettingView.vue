@@ -235,11 +235,11 @@
           <!-- 关于云库模态框 -->
           <a-modal v-model:open="aboutUsOpen" title="关于云库" :footer="null" class="about-modal">
             <div class="about-content">
-              <h3 class="app-name">智绘云库</h3>
+              <h3 class="app-name">云图汇</h3>
               <p class="version">Version 2.0.0</p>
               <div class="divider"></div>
               <p class="description">
-                &emsp;&emsp;智绘云库是一个企业级智能协作云图库平台，提供图片的上传、管理、分享和分析功能。用户可以创建个人或团队空间，上传图片并进行分类、标签管理。支持以图搜图、AI扩图等智能功能，满足企业级用户对图片管理的多样化需求。
+                &emsp;&emsp;云图汇是一个企业级智能协作云图库平台，提供图片的上传、管理、分享和分析功能。用户可以创建个人或团队空间，上传图片并进行分类、标签管理。支持以图搜图、AI扩图等智能功能，满足企业级用户对图片管理的多样化需求。
               </p>
               <p class="copyright">© {{ 2025 }} HinsCoder. All rights reserved.</p>
               <a href="https://beian.miit.gov.cn/" target="_blank" class="icp-link">
