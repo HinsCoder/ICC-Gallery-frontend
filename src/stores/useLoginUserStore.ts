@@ -41,5 +41,5 @@ export const useLoginUserStore = defineStore('loginUser', () => {
     localStorage.removeItem('token'); // 假设使用localStorage存储了token作为登录凭证，根据实际情况调整键名
   }
 
-  return { loginUser, setLoginUser, fetchLoginUser }
+  return { loginUser, setLoginUser, fetchLoginUser ,logout }
 })

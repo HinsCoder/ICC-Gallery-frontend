@@ -61,18 +61,18 @@
                   <RightOutlined class="arrow-icon" />
                 </a-button>
 
-                <a-button class="custom-button" @click="showLogoutConfirm">
-                  <span class="button-content">
-                    <LogoutOutlined class="button-icon destroy-icon" />
-                    <span class="button-text">注销账号</span>
-                  </span>
-                  <RightOutlined class="arrow-icon" />
-                </a-button>
-
                 <a-button class="custom-button" @click="openExchangeVipModal">
                   <span class="button-content">
                     <GiftOutlined class="button-icon exchangevip-icon" />
                     <span class="button-text">兑换会员</span>
+                  </span>
+                  <RightOutlined class="arrow-icon" />
+                </a-button>
+
+                <a-button class="custom-button" @click="showLogoutConfirm">
+                  <span class="button-content">
+                    <LogoutOutlined class="button-icon destroy-icon" />
+                    <span class="button-text">注销账号</span>
                   </span>
                   <RightOutlined class="arrow-icon" />
                 </a-button>
@@ -319,27 +319,6 @@ const myMessage = ref({
   userAvatar: loginUserStore.loginUser.userAvatar,
   email: loginUserStore.loginUser.email,
 })
-// 关注和粉丝数据
-const followAndFans = ref({
-  followCount: 0,
-  fansCount: 0,
-})
-
-// 获取关注和粉丝数量
-const getFollowAndFansCount = async () => {
-  if (!loginUserStore.loginUser.id) return
-  try {
-    const res = await getFollowAndFansCountUsingPost({
-      id: loginUserStore.loginUser.id,
-    })
-    if (res.data.code === 0) {
-      followAndFans.value = res.data.data || { followCount: 0, fansCount: 0 }
-    }
-  } catch (error) {
-    // console.error('获取关注粉丝数失败:', error)
-  }
-}
-
 
 // 页面加载时获取设备类型
 onMounted(async () => {
@@ -999,6 +978,7 @@ onBeforeUnmount(() => {
 }
 
 :deep(.submit-button:hover) {
+  color: #dedede;
   transform: translateY(-1px);
   box-shadow: 0 6px 16px rgba(107, 107, 255, 0.3);
 }
@@ -1353,7 +1333,8 @@ onBeforeUnmount(() => {
   transition: all 0.3s ease;
 
   &:hover {
-    background: #5393ff;
+    color: #e88f8f;
+    background: #ff4d4f;
     transform: translateY(-1px);
     box-shadow: 0 4px 12px rgba(107, 107, 255, 0.2);
   }

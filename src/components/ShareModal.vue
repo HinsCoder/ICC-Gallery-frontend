@@ -70,7 +70,7 @@ const closeModal = () => {
   visible.value = false
 }
 
-// 复制链接
+// 复制链接（localhost或ssl生效）
 const copyLink = async () => {
   try {
     await navigator.clipboard.writeText(props.link);

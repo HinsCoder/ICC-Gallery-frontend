@@ -16,7 +16,7 @@
           type="primary"
           ghost
           :icon="h(UpCircleOutlined)"
-          :href="`/add_space?id=${space.id}`"
+          :href="`/update_space?id=${space.id}`"
           target="_blank"
         >
           升级空间
