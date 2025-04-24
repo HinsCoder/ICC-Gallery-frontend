@@ -13,6 +13,17 @@
           + 创建图片
         </a-button>
         <a-button
+          v-if="canManageSpaceUser && isCurrentSpaceTeamType"
+          type="primary"
+          ghost
+          :icon="h(TeamOutlined)"
+          :href="`/spaceUserManage/${id}`"
+          target="_blank"
+        >
+          成员管理
+        </a-button>
+        <a-button
+          v-if="canManageSpaceUser"
           type="primary"
           ghost
           :icon="h(UpCircleOutlined)"
@@ -91,8 +102,8 @@ import PictureSearchForm from '@/components/PictureSearchForm.vue'
 import { ColorPicker } from 'vue3-colorpicker'
 import 'vue3-colorpicker/style.css'
 import BatchEditPictureModal from '@/components/BatchEditPictureModal.vue'
-import { BarChartOutlined, EditOutlined, UpCircleOutlined } from '@ant-design/icons-vue'
-import { SPACE_PERMISSION_ENUM, SPACE_TYPE_MAP } from '../constants/space.ts'
+import { BarChartOutlined, EditOutlined, TeamOutlined, UpCircleOutlined } from '@ant-design/icons-vue'
+import { SPACE_PERMISSION_ENUM, SPACE_TYPE_ENUM, SPACE_TYPE_MAP } from '../constants/space.ts'
 
 interface Props {
   id: string | number
@@ -232,6 +243,10 @@ watch(
     fetchData()
   },
 )
+
+const isCurrentSpaceTeamType = computed(() => {
+  return space.value?.spaceType === SPACE_TYPE_ENUM.TEAM;
+});
 </script>
 
 <style scoped>

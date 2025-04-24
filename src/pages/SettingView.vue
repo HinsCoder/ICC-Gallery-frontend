@@ -71,13 +71,20 @@
 
                 <a-button class="custom-button" @click="showLogoutConfirm">
                   <span class="button-content">
-                    <LogoutOutlined class="button-icon destroy-icon" />
+                    <WarningOutlined class="button-icon destroy-icon" />
                     <span class="button-text">注销账号</span>
                   </span>
                   <RightOutlined class="arrow-icon" />
                 </a-button>
-              </div>
 
+                <a-button class="custom-button" @click="handleLogout">
+                  <span class="button-content">
+                    <LogoutOutlined class="button-icon logout-icon" />
+                    <span class="button-text">退出登录</span>
+                  </span>
+                  <RightOutlined class="arrow-icon" />
+                </a-button>
+              </div>
               <!-- PC端卡通插画区域 -->
               <div class="illustration-container">
                 <div class="illustration-content">
@@ -236,14 +243,14 @@
           <a-modal v-model:open="aboutUsOpen" title="关于云库" :footer="null" class="about-modal">
             <div class="about-content">
               <h3 class="app-name">云图汇</h3>
-              <p class="version">Version 2.0.0</p>
+              <p class="version">Version 2.1.0</p>
               <div class="divider"></div>
               <p class="description">
-                &emsp;&emsp;云图汇是一个企业级智能协作云图库平台，提供图片的上传、管理、分享和分析功能。用户可以创建个人或团队空间，上传图片并进行分类、标签管理。支持以图搜图、AI扩图等智能功能，满足企业级用户对图片管理的多样化需求。
+                &emsp;&emsp;云图汇是一个企业级智能协作云图库平台，提供图片的上传、管理、分享和分析功能。用户可以创建个人或团队空间，上传图片并进行分类、标签管理。支持以图搜图、AI扩图等功能，满足企业级用户对图片管理的多样化需求。
               </p>
-              <p class="copyright">© {{ 2025 }} HinsCoder. All rights reserved.</p>
+              <p class="copyright">© {{ currentYear }} HinsCoder. All rights reserved.</p>
               <a href="https://beian.miit.gov.cn/" target="_blank" class="icp-link">
-                备案号
+                粤ICP备2025402338号-1
               </a>
             </div>
           </a-modal>
@@ -287,6 +294,7 @@ import {
   ExclamationCircleFilled,
   MailOutlined,
   GiftOutlined,
+  WarningOutlined
 } from '@ant-design/icons-vue'
 
 import { Form, message } from 'ant-design-vue'
@@ -297,7 +305,7 @@ import {
   updateUserAvatarUsingPost,
   getEmailCodeUsingPost,
   changeEmailUsingPost,
-  exchangeVipUsingPost
+  exchangeVipUsingPost, userLogoutUsingPost
 } from '@/api/userController.ts'
 import router from '@/router'
 import UserModifyPassWord = API.UserModifyPassWord
@@ -320,10 +328,7 @@ const myMessage = ref({
   email: loginUserStore.loginUser.email,
 })
 
-// 页面加载时获取设备类型
-onMounted(async () => {
-  getFollowAndFansCount()
-})
+
 // 根据用户角色计算出对应的显示文本
 const roleText = ref<string>(myMessage.value.userRole === 'admin' ? '管理员' : '普通用户')
 const openModal = () => {
@@ -408,6 +413,26 @@ const confirmLogout = async () => {
   }
   logoutConfirmOpen.value = false
 }
+
+const handleLogout = async () => {
+  try {
+    const res = await userLogoutUsingPost();
+    if (res.data.code === 0) {
+      message.success('退出登录成功');
+      // 清除前端存储的登录状态
+      loginUserStore.logout(); // 调用 store 中的 logout 方法
+      // 跳转到登录页面，替换历史记录
+      router.push({
+        path: '/user/login',
+        replace: true,
+      });
+    } else {
+      message.error('退出登录失败: ' + res.data.message);
+    }
+  } catch (error: any) {
+    message.error('退出登录异常: ' + error.message);
+  }
+};
 
 // 修改文件输入框的引用名称
 const fileInput = ref<HTMLInputElement | null>(null)
@@ -605,6 +630,12 @@ onBeforeUnmount(() => {
     timer = null
   }
 })
+
+const currentYear = computed(() => getCurrentYear())
+
+const getCurrentYear = () => {
+  return new Date().getFullYear()
+}
 </script>
 
 <style scoped>
@@ -710,12 +741,12 @@ onBeforeUnmount(() => {
 .button-container {
   background: #F8F8F8; /* 更柔和的浅灰色背景 */
   border-radius: 16px;
-  padding: 12px;
+  padding: 16px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-  height: 340px;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
+  gap: 5px;
   background: linear-gradient(135deg, rgba(201, 173, 167, 0.05) 0%, rgba(190, 180, 166, 0.05) 100%); /* 莫兰迪粉棕色渐变 */
 }
 
@@ -733,7 +764,6 @@ onBeforeUnmount(() => {
   align-items: center;
   justify-content: space-between;
   border-radius: 12px;
-  margin-bottom: 8px !important;
   transition: all 0.3s ease;
 }
 
@@ -762,6 +792,10 @@ onBeforeUnmount(() => {
   background: rgba(190, 180, 166, 0.05); /* 灰棕色 */
 }
 
+:deep(.custom-button:has(.logout-icon)) {
+  background: rgba(158, 158, 158, 0.05); /* 灰色 */
+}
+
 /* 莫兰迪色系按钮悬停效果 (略微加深) */
 :deep(.custom-button:has(.edit-icon):hover) {
   background: rgba(119, 141, 169, 0.1); /* 灰蓝色 */
@@ -785,6 +819,10 @@ onBeforeUnmount(() => {
 
 :deep(.custom-button:has(.exchangevip-icon):hover) {
   background: rgba(190, 180, 166, 0.1); /* 灰棕色 */
+}
+
+:deep(.custom-button:has(.logout-icon):hover) {
+  background: rgba(158, 158, 158, 0.1); /* 灰色 */
 }
 
 .button-content {
@@ -812,6 +850,9 @@ onBeforeUnmount(() => {
 }
 :deep(.exchangevip-icon) {
   color: #ffb44a;
+}
+:deep(.logout-icon) {
+  color: #64748b;
 }
 
 :deep(.button-text) {

@@ -53,6 +53,13 @@
                     <CrownOutlined :style="{ color: '#ffd700' }" />
                     <span class="vip-text"> 黄金会员</span>
                   </a-menu-item>
+                  <a-menu-item
+                    v-if="loginUserStore.loginUser.userRole === 'svip'"
+                    class="svip-menu-item"
+                  >
+                  <SketchOutlined :style="{ color: '#9370DB' }" />
+                  <span class="svip-text"> 钻石会员</span>
+                  </a-menu-item>
                   <a-menu-item @click="doLogout">
                     <LogoutOutlined />
                     退出登录
@@ -82,6 +89,7 @@ import {
   UserOutlined,
   SettingOutlined,
   CrownOutlined,
+  SketchOutlined,
   GiftOutlined,
 } from '@ant-design/icons-vue'
 import { type MenuProps, message } from 'ant-design-vue'
@@ -249,6 +257,15 @@ onMounted(async () => {
 }
 .vip-text {
   color: #ffd700;
+  font-weight: 600;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+.svip-menu-item {
+  background: linear-gradient(45deg, #f3e5f5, #e1bee7);
+}
+.svip-text {
+  color: #7B1FA2;
   font-weight: 600;
   text-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
 }
